@@ -1,11 +1,11 @@
 #!/bin/bash
-# ec2init       Blah blah
+# ec2init       EC2 bootstrap using Puppet
 #
 # Author:       Dan Carley <dan.carley@gmail.com>
 #
 # chkconfig: 345 85 15
 #
-# description: Blah blah
+# description: EC2 bootstrap using Puppet
 # processname: ec2init
 # config: /etc/sysconfig/ec2init
 
