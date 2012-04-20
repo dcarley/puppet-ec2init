@@ -16,7 +16,11 @@ Bash is not able to, without a lot of manual scaffolding: access meta-data and u
 
 Puppet has a framework for doing all of the above. We already need it pre-installed in our AMIs anyway. It's a darn sight easier to read and write. It's less likely to conflict with our subsequent Puppet runs.
 
-## Default actions
+## How
+
+It is a standalone Puppet module and accompanying SysVinit script that is designed to be baked into an AMI and run on every boot. It should bootstrap an otherwise vanilla AMI for subsequent, more fully featured, Puppet runs.
+
+### Default actions
 
 The following actions are performed by default:
 
@@ -26,7 +30,7 @@ The following actions are performed by default:
 - Disables SSH remote root and password based logins.
 - Logs the host's SSH public key fingerprints.
 
-## Additional actions
+### Additional actions
 
 Additional actions can be triggered by passing JSON content in userdata.
 
