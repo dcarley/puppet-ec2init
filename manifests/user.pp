@@ -27,6 +27,6 @@ class ec2init::user {
                 content => "${::ec2_public_keys_0_openssh_key}\n";
         }
     } else {
-        warning("Unable to get SSH key from ec2_public_keys_0_openssh_key")
+        warning('Unable to get SSH key from ec2_public_keys_0_openssh_key')
     }
 }

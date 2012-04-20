@@ -3,15 +3,15 @@ class ec2init::ddns {
 
     if $::ec2init::params::hostname and $::ec2init::params::aws_key and $::ec2init::params::aws_secret {
         package {
-            "python-boto":
+            'python-boto':
                 ensure  => present;
-            "ec2ddns":
+            'ec2ddns':
                 ensure  => present,
-                require => Package["python-boto"];
+                require => Package['python-boto'];
         }
         exec { 'register dynamic dns hostname':
             command => "/usr/bin/python /usr/sbin/ec2ddns.py -k ${::ec2init::params::aws_key} -s ${::ec2init::params::aws_secret} ${::ec2init::params::hostname} ${::ec2_public_hostname}",
-            require => Package["ec2ddns"],
+            require => Package['ec2ddns'],
         }
     }
 }

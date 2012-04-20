@@ -1,1 +1,3 @@
+.bundle
+vendor
 puppet-ec2init-*.tgz
