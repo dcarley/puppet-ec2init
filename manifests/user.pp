@@ -21,7 +21,8 @@ class ec2init::user {
     if $::ec2_public_keys_0_openssh_key {
         file {
             "/home/${::ec2init::params::ec2_username}/.ssh":
-                ensure  => directory;
+                ensure  => directory,
+                require => User[$::ec2init::params::ec2_username];
             "/home/${::ec2init::params::ec2_username}/.ssh/authorized_keys":
                 ensure  => present,
                 content => "${::ec2_public_keys_0_openssh_key}\n";
