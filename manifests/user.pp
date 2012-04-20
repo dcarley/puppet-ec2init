@@ -2,7 +2,6 @@ class ec2init::user {
     include ::ec2init::params
 
     File {
-        mode    => '0600',
         owner   => $::ec2init::params::ec2_username,
         group   => $::ec2init::params::ec2_username,
     }
@@ -22,9 +21,11 @@ class ec2init::user {
         file {
             "/home/${::ec2init::params::ec2_username}/.ssh":
                 ensure  => directory,
+                mode    => '0700',
                 require => User[$::ec2init::params::ec2_username];
             "/home/${::ec2init::params::ec2_username}/.ssh/authorized_keys":
                 ensure  => present,
+                mode    => '0600',
                 content => "${::ec2_public_keys_0_openssh_key}\n";
         }
     } else {
