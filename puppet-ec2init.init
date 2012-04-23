@@ -78,6 +78,8 @@ rh_status() {
     else
         echo "$prog is stopped"
     fi
+
+    return $RETVAL
 }
 
 rh_status_q() {
