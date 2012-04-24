@@ -16,9 +16,7 @@ class ec2init::sudo {
             content => template('ec2init/etc/sudoers.d/ec2.erb');
     }
     augeas { 'sudoers includedir':
-        changes => [
-            'set /files/etc/sudoers/#includedir /etc/sudoers.d',
-        ],
+        changes => 'set /files/etc/sudoers/#includedir /etc/sudoers.d',
         require => [
             File['/etc/sudoers.d/ec2'],
             Class['ec2init::user']

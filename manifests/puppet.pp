@@ -10,16 +10,12 @@ class ec2init::puppet {
 
     if $::ec2init::params::puppet_server {
         augeas { 'puppet.conf agent:server':
-            changes => [
-                "set /files/etc/puppet/puppet.conf/agent/server ${::ec2init::params::puppet_server}",
-            ],
+            changes => "set /files/etc/puppet/puppet.conf/agent/server ${::ec2init::params::puppet_server}",
         }
     }
     if $::ec2init::params::puppet_environment {
         augeas { 'puppet.conf agent:environment':
-            changes => [
-                "set /files/etc/puppet/puppet.conf/agent/environment ${::ec2init::params::puppet_environment}",
-            ],
+            changes => "set /files/etc/puppet/puppet.conf/agent/environment ${::ec2init::params::puppet_environment}",
         }
     }
 }

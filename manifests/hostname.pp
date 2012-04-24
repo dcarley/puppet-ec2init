@@ -3,9 +3,7 @@ class ec2init::hostname {
 
     if $::ec2init::params::hostname {
         augeas { 'sysconfig/network hostname':
-            changes => [
-                "set /files/etc/sysconfig/network/HOSTNAME ${::ec2init::params::hostname}",
-            ],
+            changes => "set /files/etc/sysconfig/network/HOSTNAME ${::ec2init::params::hostname}",
         }
         host { $::ec2init::params::hostname:
             ensure  => present,
