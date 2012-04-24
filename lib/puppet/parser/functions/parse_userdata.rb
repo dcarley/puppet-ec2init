@@ -1,6 +1,6 @@
 module Puppet::Parser::Functions
     newfunction(:parse_userdata, :type => :rvalue) do |args|
-        if args.size > 0
+        unless args.length == 0
             raise Puppet::ParseError, "parse_userdata(): Requires no arguments"
         end
 
