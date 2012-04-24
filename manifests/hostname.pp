@@ -5,8 +5,9 @@ class ec2init::hostname {
         augeas { 'sysconfig/network hostname':
             changes => "set /files/etc/sysconfig/network/HOSTNAME ${::ec2init::params::hostname}",
         }
-        host { $::ec2init::params::hostname:
+        host { 'custom fqdn':
             ensure  => present,
+            name    => $::ec2init::params::hostname,
             ip      => $::ipaddress,
         }
         exec { 'set system hostname':
