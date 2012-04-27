@@ -36,7 +36,7 @@ Additional actions can be triggered by passing JSON content in userdata.
 
 The following actions can be performed:
 
-- Set the instance's hostname.
+- Set the instance's hostname and domainname.
 - Register the hostname in DNS using Route 53.
 - Configure `puppet.conf` agent values.
 
