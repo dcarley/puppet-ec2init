@@ -5,15 +5,13 @@ describe 'ec2init::puppet' do
         should include_class('ec2init::params')
     end
 
-    describe 'agent defaults' do
-        it 'should enable pluginsync and reports' do
-            should contain_augeas('puppet.conf agent:defaults').with(
-                'changes' => [
-                    'set /files/etc/puppet/puppet.conf/agent/pluginsync true',
-                    'set /files/etc/puppet/puppet.conf/agent/report true'
-                ]
-            )
-        end
+    it 'should enable pluginsync and reports' do
+        should contain_augeas('puppet.conf agent:defaults').with(
+            'changes' => [
+                'set /files/etc/puppet/puppet.conf/agent/pluginsync true',
+                'set /files/etc/puppet/puppet.conf/agent/report true'
+            ]
+        )
     end
 
     describe 'when server present' do
@@ -22,7 +20,8 @@ describe 'ec2init::puppet' do
         }
         it 'should set server' do
             should contain_augeas('puppet.conf agent:server').with(
-                'changes' => 'set /files/etc/puppet/puppet.conf/agent/server foo.bar'
+                'changes'   => 'set /files/etc/puppet/puppet.conf/agent/server foo.bar',
+                'before'    => 'Exec[puppet agent]'
             )
         end
     end
@@ -38,7 +37,8 @@ describe 'ec2init::puppet' do
         }
         it 'should set environment' do
             should contain_augeas('puppet.conf agent:environment').with(
-                'changes' => 'set /files/etc/puppet/puppet.conf/agent/environment foobar'
+                'changes'   => 'set /files/etc/puppet/puppet.conf/agent/environment foobar',
+                'before'    => 'Exec[puppet agent]'
             )
         end
     end
@@ -46,5 +46,15 @@ describe 'ec2init::puppet' do
         it 'should not set environment' do
             should_not contain_augeas('puppet.conf agent:environment')
         end
+    end
+
+    it 'should execute puppet agent' do
+        should contain_exec('puppet agent').with(
+            'command'   => '/usr/bin/puppet agent --onetime &',
+            'require'   => [
+                'Augeas[puppet.conf agent:defaults]',
+                'Class[Ec2init::Hostname]',
+            ]
+        )
     end
 end

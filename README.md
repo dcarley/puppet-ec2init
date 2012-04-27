@@ -29,6 +29,7 @@ The following actions are performed by default:
 - Creates a sudoers rule for that user.
 - Disables SSH remote root and password based logins.
 - Logs the host's SSH public key fingerprints.
+- Performs an intial Puppet agent run against a server.
 
 ### Additional actions
 
