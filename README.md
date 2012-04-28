@@ -30,6 +30,8 @@ The following actions are performed by default:
 - Disables SSH remote root and password based logins.
 - Logs the host's SSH public key fingerprints.
 
+The init script will then perform a background run of the agent against a real master.
+
 ### Additional actions
 
 Additional actions can be triggered by passing JSON content in userdata.
