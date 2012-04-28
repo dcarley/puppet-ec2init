@@ -50,6 +50,10 @@ start() {
         failure 
     fi
     echo
+
+    echo -n $"Starting ${prog} agent onetime: "
+    puppet agent --onetime && success || failure
+    echo
 }
 
 stop() {
