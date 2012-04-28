@@ -1,7 +1,7 @@
 %{?_initddir:%define _initrddir %{_initrddir}}
 
 Name:       puppet-ec2init
-Version:    0.1
+Version:    0.2
 Release:    1%{?dist}
 Summary:    EC2 bootstrapping using Puppet
 
@@ -56,5 +56,10 @@ fi
 %{_sysconfdir}/%{name}
 
 %changelog
+* Sat Apr 28 2012 Dan Carley <dan.carley@gmail.com> - 0.2-1
+- Set new domain in resolv.conf and dhclient.conf
+- Init script calls agent after initial run.
+- Puppet code is unit tested.
+
 * Fri Apr 20 2012 Dan Carley <dan.carley@gmail.com> - 0.1-1
 - Initial release.
