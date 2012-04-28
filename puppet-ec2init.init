@@ -99,7 +99,7 @@ case "$1" in
         stop
     ;;
     restart)
-        stop
+        rm -f $lockfile
         start
     ;;
     status)
