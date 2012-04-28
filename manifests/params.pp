@@ -4,9 +4,11 @@ class ec2init::params {
 
     if has_key($userdata, 'hostname') {
         $hostname = $userdata['hostname']
+        $domainname = domain_from_fqdn($hostname)
     } else {
         warning('Unable to parse hostname from userdata')
         $hostname = false
+        $domainname = false
     }
 
     if has_key($userdata, 'route53') and has_key($userdata['route53'], 'aws_access_key_id') and has_key($userdata['route53'], 'aws_secret_access_key') {
