@@ -8,8 +8,9 @@ Summary:    EC2 bootstrapping using Puppet
 Group:      System Tools
 License:    ASL 2.0
 URL:        https://github.com/dcarley/puppet-ec2init
-#           git archive --format tar --prefix %{name}-%{version}/ HEAD \
-#               | gzip > %{name}-%{version}.tgz
+
+# export TAG=%{version}
+# git archive --format tar --prefix puppet-ec2init-${TAG}/ HEAD | gzip > puppet-ec2init-${TAG}.tgz
 Source0:    %{name}-%{version}.tgz
 BuildArch:  noarch
 BuildRoot:  %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
