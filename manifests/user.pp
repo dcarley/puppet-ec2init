@@ -14,7 +14,7 @@ class ec2init::user {
         ensure      => present,
         name        => $::ec2init::params::ec2_username,
         gid         => $::ec2init::params::ec2_username,
-        groups      => '',
+        groups      => [ ],
         membership  => 'inclusive',
         managehome  => true,
         require     => Group['ec2 unprivileged group'],
