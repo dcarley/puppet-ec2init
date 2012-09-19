@@ -18,4 +18,53 @@ class ec2init::puppet {
             changes => "set /files/etc/puppet/puppet.conf/agent/environment ${::ec2init::params::puppet_environment}",
         }
     }
+    if $::ec2init::params::puppet_certname{
+        augeas { 'puppet.conf agent:certname':
+            changes => "set /files/etc/puppet/puppet.conf/agent/certname ${::ec2init::params::puppet_certname}",
+        }
+    }
+    if $::ec2init::params::puppet_ca_server {
+        augeas { 'puppet.conf agent:ca_server':
+            changes => "set /files/etc/puppet/puppet.conf/agent/ca_server ${::ec2init::params::puppet_ca_server}",
+        }
+    }
+
+  #
+  #  Create workaround crontab entry for http://projects.puppetlabs.com/issues/4680
+  #
+    cron { "fix_frickin_puppet_4680":
+      command     => "/root/workaround_4680.sh",
+      user        => root,
+      hour        => '*',
+      minute      => '*/10',
+      environment => [ "PIDDIR=/var/tmp", "LOGDIR=/var/log" ],
+      ensure      => present,
+    }
+
+    file { "/root/workaround_4680.sh": 
+      ensure  => file,
+      mode    => 700, owner => 'root', group => 'root', 
+      source => 'puppet:///modules/ec2init/workaround_4680.sh',
+    }
+
+  #
+  #  End of workaround
+  #
+   
+  #
+  # Inject AWS creds
+  #
+    file { "/etc/sysconfig/aws_creds":
+      ensure  => file,
+      mode    => 700, owner => 'root', group => 'root',
+      content => template("ec2init/etc/sysconfig/aws_creds.erb"),
+    }
+
+    service { 'puppet':
+        ensure      => running,
+        enable      => true,
+        hasstatus   => true,
+        hasrestart  => true,
+        require     => Service['sshd'],
+    }
 }

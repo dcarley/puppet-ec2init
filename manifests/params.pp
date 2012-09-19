@@ -1,5 +1,6 @@
 class ec2init::params {
     $ec2_username = 'ec2-user'
+    $ec2_UID = 502
     $userdata = parse_userdata()
 
     if has_key($userdata, 'hostname') {
@@ -30,5 +31,17 @@ class ec2init::params {
         $puppet_environment = $userdata['puppet']['environment']
     } else {
         $puppet_environment = false
+    }
+
+    if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'ca_server') {
+        $puppet_ca_server = $userdata['puppet']['ca_server']
+    } else {
+        $puppet_ca_server = false
+    }
+
+    if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'certname') {
+        $puppet_certname = $userdata['puppet']['certname']
+    } else {
+        $puppet_certname = false
     }
 }

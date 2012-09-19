@@ -14,6 +14,7 @@ class ec2init::user {
         ensure      => present,
         name        => $::ec2init::params::ec2_username,
         gid         => $::ec2init::params::ec2_username,
+        uid         => $::ec2init::params::ec2_UID,
         groups      => [ ],
         membership  => 'inclusive',
         managehome  => true,
