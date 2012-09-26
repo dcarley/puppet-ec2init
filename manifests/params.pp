@@ -16,14 +16,14 @@ class ec2init::params {
 
     if regsubst($aws_creds_file, '\w', '', 'G') != "" {
         $aws_role = regsubst($aws_creds_file, 'AWS_ROLE\w+(.+)\n?', '\1')
-        $iam_data = parse_iam_roles()
     else if has_key($userdata, 'aws_role') {
         $aws_role = $userdata['aws_role']
-        $iam_data = parse_iam_roles()
     } else {
         warning('Unable to parse aws_role from userdata')
         $aws_role = ""
     }
+
+    $iam_data = parse_iam_roles($aws_role)
 
     $aws_key = $aws_role ? {
       ""      => "",
