@@ -12,13 +12,37 @@ class ec2init::params {
         $domainname = false
     }
 
-    if has_key($userdata, 'route53') and has_key($userdata['route53'], 'aws_access_key_id') and has_key($userdata['route53'], 'aws_secret_access_key') {
-        $aws_key = $userdata['route53']['aws_access_key_id']
-        $aws_secret = $userdata['route53']['aws_secret_access_key']
+    $aws_creds_file = file('/etc/sysconfig/ows_creds')
+
+    if regsubst($aws_creds_file, '\w', '', 'G') != "" {
+        $aws_role = regsubst($aws_creds_file, 'AWS_ROLE\w+(.+)\n?', '\1')
+        $iam_data = parse_iam_roles()
+    else if has_key($userdata, 'aws_role') {
+        $aws_role = $userdata['aws_role']
+        $iam_data = parse_iam_roles()
     } else {
-        warning('Unable to parse route53/aws_access_key_id/aws_secret_access_key from userdata')
-        $aws_key = false
-        $aws_secret = false
+        warning('Unable to parse aws_role from userdata')
+        $aws_role = ""
+    }
+
+    $aws_key = $aws_role ? {
+      ""      => "",
+      default => $iam_data['AccessKeyId'],
+    }
+
+    $aws_secret = $aws_role ? {
+      ""      => "",
+      default => $iam_data['SecretAccessKey'],
+    }
+
+    $aws_token= $aws_role ? {
+      ""      => "",
+      default => $iam_data['Token'],
+    }
+
+    $aws_expiration= $aws_role ? {
+      ""      => "",
+      default => $iam_data['Expiration'],
     }
 
     if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'server') {
