@@ -1,0 +1,113 @@
+#!/bin/bash
+# ec2init       EC2 bootstrap using Puppet
+#
+# Author:       Dan Carley <dan.carley@gmail.com>
+#
+# chkconfig: 345 85 15
+#
+# description: EC2 bootstrap using Puppet
+# processname: ec2init
+# config: /etc/sysconfig/ec2init
+
+PATH=/usr/bin:/sbin:/bin:/usr/sbin
+export PATH
+
+prog="puppet-ec2init"
+lockfile="/var/lock/subsys/$prog"
+args="apply --modulepath /etc/${prog} --logdest console --logdest syslog"
+
+[ -f /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
+RETVAL=0
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+check_api() {
+    # Wait for EC2 metadata service to come up.
+    curl -so /dev/null --fail --connect-timeout 30 http://169.254.169.254/
+    RETVAL=$?
+
+    if [ $RETVAL -ne 0 ]; then
+        echo -n $"Unable to reach metadata service: "
+        failure
+        echo
+        exit $RETVAL
+    fi
+}
+
+start() {
+    echo $"Starting ${prog}: .."
+
+    check_api
+    puppet $args -e "include ::ec2init::start"
+    RETVAL=$?
+
+    echo -n $"Starting ${prog}: "
+    if [ $RETVAL -eq 0 ]; then
+        success
+        touch $lockfile
+    else
+        failure 
+    fi
+    echo
+
+    echo -n $"Starting ${prog} agent onetime: "
+#    puppet agent --onetime && success || failure
+    echo
+}
+
+stop() {
+    echo $"Stopping ${prog}: .."
+
+    check_api
+    puppet $args -e "include ::ec2init::stop"
+    RETVAL=$?
+
+    echo -n $"Stopping ${prog}: "
+    if [ $RETVAL -eq 0 ]; then
+        success
+        rm -f $lockfile
+    else
+        failure 
+    fi
+    echo
+}
+
+rh_status() {
+    [ -f $lockfile ]
+    RETVAL=$?
+
+    if [ $RETVAL -eq 0 ]; then
+        echo "$prog is running..."
+    else
+        echo "$prog is stopped"
+    fi
+
+    return $RETVAL
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+case "$1" in
+    start)
+        rh_status_q && exit 0
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        rm -f $lockfile
+        start
+    ;;
+    status)
+        rh_status
+    ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        exit 1
+esac
+
+exit $RETVAL

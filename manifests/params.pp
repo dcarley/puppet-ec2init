@@ -1,5 +1,6 @@
 class ec2init::params {
     $ec2_username = 'ec2-user'
+    $ec2_UID = 502
     $userdata = parse_userdata()
 
     if has_key($userdata, 'hostname') {
@@ -11,13 +12,37 @@ class ec2init::params {
         $domainname = false
     }
 
-    if has_key($userdata, 'route53') and has_key($userdata['route53'], 'aws_access_key_id') and has_key($userdata['route53'], 'aws_secret_access_key') {
-        $aws_key = $userdata['route53']['aws_access_key_id']
-        $aws_secret = $userdata['route53']['aws_secret_access_key']
+    $aws_creds_file = file('/etc/sysconfig/aws_creds')
+
+    if regsubst($aws_creds_file, '\w', '', 'G') != "" {
+        $aws_role = regsubst($aws_creds_file, 'AWS_ROLE\w+(.+)\n?', '\1')
+    } elsif has_key($userdata, 'aws_role') {
+        $aws_role = $userdata['aws_role']
     } else {
-        warning('Unable to parse route53/aws_access_key_id/aws_secret_access_key from userdata')
-        $aws_key = false
-        $aws_secret = false
+        warning('Unable to parse aws_role from userdata')
+        $aws_role = ""
+    }
+
+    $iam_data = parse_iam_creds($aws_role)
+
+    $aws_key = $aws_role ? {
+      ""      => "",
+      default => $iam_data['AccessKeyId'],
+    }
+
+    $aws_secret = $aws_role ? {
+      ""      => "",
+      default => $iam_data['SecretAccessKey'],
+    }
+
+    $aws_token= $aws_role ? {
+      ""      => "",
+      default => $iam_data['Token'],
+    }
+
+    $aws_expiration= $aws_role ? {
+      ""      => "",
+      default => $iam_data['Expiration'],
     }
 
     if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'server') {
@@ -30,5 +55,17 @@ class ec2init::params {
         $puppet_environment = $userdata['puppet']['environment']
     } else {
         $puppet_environment = false
+    }
+
+    if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'ca_server') {
+        $puppet_ca_server = $userdata['puppet']['ca_server']
+    } else {
+        $puppet_ca_server = false
+    }
+
+    if has_key($userdata, 'puppet') and has_key($userdata['puppet'], 'certname') {
+        $puppet_certname = $userdata['puppet']['certname']
+    } else {
+        $puppet_certname = false
     }
 }
