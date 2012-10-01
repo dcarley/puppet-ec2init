@@ -12,18 +12,17 @@ class ec2init::params {
         $domainname = false
     }
 
-    $aws_creds_file = file('/etc/sysconfig/ows_creds')
+    $aws_creds_file = file('/etc/sysconfig/aws_creds')
 
-    if regsubst($aws_creds_file, '\w', '', 'G') != "" {
-        $aws_role = regsubst($aws_creds_file, 'AWS_ROLE\w+(.+)\n?', '\1')
-    else if has_key($userdata, 'aws_role') {
-        $aws_role = $userdata['aws_role']
-    } else {
-        warning('Unable to parse aws_role from userdata')
-        $aws_role = ""
+    $aws_role = inline_template('<%= @aws_creds_file[/AWS_ROLE\w+(.+?)\n?/,1] %>') ? {
+      ""      => has_key($userdata, 'aws_role') ? {
+                   true    => $userdata['aws_role'],
+                   default => warning('Unable to parse aws_role from userdata'),
+      },
+      default => inline_template('<%= @aws_creds_file[/AWS_ROLE\w+(.+?)\n?/,1] %>'),
     }
 
-    $iam_data = parse_iam_roles($aws_role)
+    $iam_data = parse_iam_creds($aws_role)
 
     $aws_key = $aws_role ? {
       ""      => "",
