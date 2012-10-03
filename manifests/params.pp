@@ -12,14 +12,23 @@ class ec2init::params {
         $domainname = false
     }
 
-    $aws_creds_file = file('/etc/sysconfig/aws_creds')
+    #
+    #  The /etc/hosts is a red herring, it is just there to keep
+    # puppet from throwing a fatal error in case this is the first
+    # boot of the instance and aws_creds does not exist
+    #
+    $aws_creds_file = file('/etc/sysconfig/aws_creds', '/etc/hosts')
 
     $aws_role = inline_template('<%= @aws_creds_file[/AWS_ROLE=(.+?)\n?/,1] %>') ? {
       ""      => has_key($userdata, 'aws_role') ? {
                    true    => $userdata['aws_role'],
-                   default => warning('Unable to parse aws_role from userdata'),
+                   default => '',
       },
       default => inline_template('<%= @aws_creds_file[/AWS_ROLE=(.+?)\n?/,1] %>'),
+    }
+
+    if $aws_role == '' {
+        warning('Unable to parse aws_role from userdata')
     }
 
     $iam_data = parse_iam_creds($aws_role)
