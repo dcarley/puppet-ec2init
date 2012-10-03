@@ -61,6 +61,12 @@ class ec2init::puppet {
       replace => false,
     }
 
+    file { "/etc/profile.d/aws_creds.sh":
+      ensure  => file,
+      mode    => 700, owner => 'root', group => 'root',
+      source => 'puppet:///modules/ec2init/aws_creds.sh',
+    }
+
     cron { "pull_latest_creds":
       command     => '/usr/bin/puppet apply --modulepath /etc/puppet-ec2init --logdest syslog -e "include ::ec2init::aws_creds" > /dev/null',
       user        => root,
