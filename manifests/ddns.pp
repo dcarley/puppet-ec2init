@@ -5,13 +5,18 @@ class ec2init::ddns {
         package {
             'python-boto':
                 ensure  => present;
-            'ec2ddns':
-                ensure  => present,
-                require => Package['python-boto'];
         }
+
+        file { "/usr/sbin/ec2ddns.py":
+           ensure  => file,
+           mode    => 700, owner => 'root', group => 'root',
+           source => 'puppet:///modules/ec2init/ec2ddns.py',
+           require => Package['python-boto'],
+        }
+
         exec { 'register dynamic dns hostname':
             command => "/usr/bin/python /usr/sbin/ec2ddns.py -k ${::ec2init::params::aws_key} -s ${::ec2init::params::aws_secret} ${::ec2init::params::hostname} ${::ec2_public_hostname}",
-            require => Package['ec2ddns'],
+            require => File['/usr/sbin/ec2ddns.py'],
         }
     }
 }
