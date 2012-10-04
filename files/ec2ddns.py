@@ -76,7 +76,7 @@ def main():
 
     # Connect to route53 with AWS credentials from CLI.
     r53 = boto.connect_route53(aws_access_key_id=options.key,
-        aws_secret_access_key=options.secret, security_token=token)
+        aws_secret_access_key=options.secret, security_token=options.token)
 
     # Obtain hostedZone IDs that directly or indirectly parent our domainname.
     # Ugly manifestation from the current API/library.
