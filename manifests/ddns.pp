@@ -15,7 +15,7 @@ class ec2init::ddns {
         }
 
         exec { 'register dynamic dns hostname':
-            command => "/usr/bin/python /usr/sbin/ec2ddns.py -k ${::ec2init::params::aws_key} -s ${::ec2init::params::aws_secret} ${::ec2init::params::hostname} ${::ec2_public_hostname}",
+            command => "/usr/bin/python /usr/sbin/ec2ddns.py -k ${::ec2init::params::aws_key} -s ${::ec2init::params::aws_secret} -n ${::ec2init::params::aws_token} ${::ec2init::params::hostname} ${::ec2_public_hostname}",
             require => File['/usr/sbin/ec2ddns.py'],
         }
     }

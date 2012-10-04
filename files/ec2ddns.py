@@ -39,6 +39,7 @@ def parse_opts():
 
     parser.add_option("-k", "--key", dest="key", help="Required")
     parser.add_option("-s", "--secret", dest="secret", help="Required")
+    parser.add_option("-n", "--token", dest="token", help="Required")
     parser.add_option("-t", "--ttl", dest="ttl", default="60")
     parser.add_option("-d", "--delete", dest="delete", action="store_true", default=False)
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False)
@@ -75,7 +76,7 @@ def main():
 
     # Connect to route53 with AWS credentials from CLI.
     r53 = boto.connect_route53(aws_access_key_id=options.key,
-        aws_secret_access_key=options.secret)
+        aws_secret_access_key=options.secret, security_token=token)
 
     # Obtain hostedZone IDs that directly or indirectly parent our domainname.
     # Ugly manifestation from the current API/library.
