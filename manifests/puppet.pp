@@ -70,7 +70,6 @@ class ec2init::puppet {
     cron { "pull_latest_creds":
       command     => '/usr/bin/puppet apply --modulepath /etc/puppet-ec2init --logdest syslog -e "include ::ec2init::aws_creds" > /dev/null',
       user        => root,
-      hour        => '00',
       minute      => '*/4',
       environment => [ "MAILTO=ops@sugarinc.com", "PIDDIR=/var/tmp", "LOGDIR=/var/log" ],
       ensure      => present,
