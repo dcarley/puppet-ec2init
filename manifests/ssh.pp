@@ -7,6 +7,7 @@ class ec2init::ssh {
             'set /files/etc/ssh/sshd_config/PermitRootLogin no',
             'set /files/etc/ssh/sshd_config/PasswordAuthentication no',
         ],
+        require     => File['ec2 unprivileged ~/.ssh/authorized_keys'],
     }
     service { 'sshd':
         ensure      => running,
