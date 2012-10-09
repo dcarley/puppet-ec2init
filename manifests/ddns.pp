@@ -4,14 +4,14 @@ class ec2init::ddns {
     if $::ec2init::params::hostname and $::ec2init::params::aws_key and $::ec2init::params::aws_secret and $::ec2_public_hostname {
         package {
             'python-boto':
-                ensure  => present;
+                ensure  => absent;
         }
 
         file { "/usr/sbin/ec2ddns.py":
            ensure  => file,
            mode    => 700, owner => 'root', group => 'root',
            source => 'puppet:///modules/ec2init/ec2ddns.py',
-           require => Package['python-boto'],
+#           require => Package['python-boto'],
         }
 
         exec { 'register dynamic dns hostname':
